@@ -503,7 +503,7 @@
                 </div>
                 ${
                   !canEdit
-                    ? `<div style="margin-top:6px;font-size:12px;font-weight:800;color:#6b7280;">Read-only: Admins only can edit scores.</div>`
+                    ? `<div style="margin-top:6px;font-size:12px;font-weight:800;color:#6b7280;"></div>`
                     : ""
                 }
               </div>
