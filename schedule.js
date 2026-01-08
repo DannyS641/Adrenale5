@@ -301,37 +301,37 @@
   function buildUI(container) {
     container.innerHTML = `
       <div class="schedule-controls" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
-        <select id="dayFilter" style="padding:10px 14px;border-radius:999px;border:1px solid #e7e9f0;font-weight:700;">
+        <select id="dayFilter" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:700;">
           <option value="All">All Days</option>
           <option value="Day 1">Day 1</option>
           <option value="Day 2">Day 2</option>
           <option value="Day 3">Day 3</option>
         </select>
 
-        <select id="timeFilter" style="padding:10px 14px;border-radius:999px;border:1px solid #e7e9f0;font-weight:700;">
+        <select id="timeFilter" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:700;">
           <option value="All">All Times</option>
           <option value="Morning">Morning</option>
           <option value="Evening">Evening</option>
         </select>
 
-        <button id="printSchedule" style="padding:10px 14px;border-radius:999px;border:1px solid #e7e9f0;font-weight:800;cursor:pointer;">
+        <button id="printSchedule" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:800;color:#6b7280;cursor:pointer;">
           Print Schedule (PDF)
         </button>
 
-        <button id="adminLoginBtn" style="padding:10px 14px;border-radius:999px;border:1px solid #e7e9f0;font-weight:800;cursor:pointer;">
+        <button id="adminLoginBtn" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:800;color:#6b7280;cursor:pointer;">
           Admin Login
         </button>
 
-        <button id="adminLogoutBtn" style="display:none;padding:10px 14px;border-radius:999px;border:1px solid #e7e9f0;font-weight:800;cursor:pointer;">
+        <button id="adminLogoutBtn" style="display:none;padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:800;color:#6b7280;cursor:pointer;">
           Logout
         </button>
       </div>
 
-      <div id="adminStatus" style="margin:-2px 0 12px 0;font-weight:800;color:#6b7280;font-size:12px;">
+      <div id="adminStatus" style="margin:-2px 0 12px 0;font-weight:800;color:#6b7280;color:#6b7280;font-size:12px;">
         Viewing mode: Public (read-only)
       </div>
 
-      <div id="lockNotice" style="display:none;margin:10px 0;padding:10px 12px;border-radius:14px;border:1px solid #ffe1c8;background:#fff7f0;font-weight:700;color:#9a4a00;"></div>
+      <div id="lockNotice" style="display:none;margin:10px 0;padding:10px 12px;border-radius:14px;border:1px solid #ffe1c8;background:#0c4714597f0;font-weight:700;color:#9a4a00;"></div>
 
       <div id="scheduleList"></div>
 
@@ -347,13 +347,13 @@
     const aScore = s.a ?? "";
     const bScore = s.b ?? "";
     return `
-      <div style="border:1px solid #e7e9f0;border-radius:16px;padding:12px;background:#fff;">
+      <div style="border:1px solid #00b931;border-radius:16px;padding:12px;background:#0c471459;">
         <div style="font-weight:900;margin-bottom:8px;">${escapeHtml(
           title
         )}</div>
         <div style="display:grid;gap:8px;">
           <div style="display:flex;justify-content:space-between;gap:10px;">
-            <div style="font-weight:800;">${escapeHtml(a)}</div>
+            <div style="font-weight:800;color:#6b7280;">${escapeHtml(a)}</div>
             <div style="display:flex;gap:6px;align-items:center;">
               <input ${
                 locked ? "disabled" : ""
@@ -361,13 +361,13 @@
       aScore
     )}"
                      inputmode="numeric" placeholder="0"
-                     style="width:60px;padding:8px;border:1px solid #e7e9f0;border-radius:12px;font-weight:800;text-align:center;${
+                     style="width:60px;padding:8px;border:1px solid #00b931;border-radius:12px;font-weight:800;color:#6b7280;text-align:center;${
                        locked ? "opacity:.5;cursor:not-allowed;" : ""
                      }">
             </div>
           </div>
           <div style="display:flex;justify-content:space-between;gap:10px;">
-            <div style="font-weight:800;">${escapeHtml(b)}</div>
+            <div style="font-weight:800;color:#6b7280;">${escapeHtml(b)}</div>
             <div style="display:flex;gap:6px;align-items:center;">
               <input ${
                 locked ? "disabled" : ""
@@ -375,7 +375,7 @@
       bScore
     )}"
                      inputmode="numeric" placeholder="0"
-                     style="width:60px;padding:8px;border:1px solid #e7e9f0;border-radius:12px;font-weight:800;text-align:center;${
+                     style="width:60px;padding:8px;border:1px solid #00b931;border-radius:12px;font-weight:800;color:#6b7280;text-align:center;${
                        locked ? "opacity:.5;cursor:not-allowed;" : ""
                      }">
             </div>
@@ -440,7 +440,7 @@
 
         <div style="display:grid;gap:10px;justify-items:center;">
           <div style="font-weight:900;">Champion</div>
-          <div style="padding:12px 14px;border:1px solid #e7e9f0;border-radius:16px;min-width:220px;text-align:center;font-weight:900;background:#fff;">
+          <div style="padding:12px 14px;border:1px solid #00b931;border-radius:16px;min-width:220px;text-align:center;font-weight:900;background:#0c471459;">
             ${escapeHtml(champ)}
           </div>
         </div>
@@ -480,7 +480,7 @@
           : "";
 
         return `
-          <div class="game-card" style="border:1px solid #e7e9f0;border-radius:16px;padding:14px;margin-bottom:12px;background:#fff;">
+          <div class="game-card" style="border:1px solid #00b931;border-radius:16px;padding:14px;margin-bottom:12px;background:#0c471459;">
             ${label}
             <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
               <div>
@@ -492,7 +492,7 @@
           g.timeSlot
         )} • ${escapeHtml(g.hour)} — ${escapeHtml(g.court)}
                 </div>
-                <div style="margin-top:8px;font-weight:800;font-size:12px;color:${
+                <div style="margin-top:8px;font-weight:800;color:#6b7280;font-size:12px;color:${
                   winner ? "#0f7a3b" : "#6b7280"
                 };">
                   ${
@@ -503,7 +503,7 @@
                 </div>
                 ${
                   !canEdit
-                    ? `<div style="margin-top:6px;font-size:12px;font-weight:800;color:#6b7280;"></div>`
+                    ? `<div style="margin-top:6px;font-size:12px;font-weight:800;color:#6b7280;color:#6b7280;"></div>`
                     : ""
                 }
               </div>
@@ -513,7 +513,7 @@
           g.id
         }" data-score-side="a" value="${escapeAttr(aScore)}"
                        inputmode="numeric" placeholder="0"
-                       style="width:64px;padding:10px;border:1px solid #e7e9f0;border-radius:12px;font-weight:900;text-align:center;${
+                       style="width:64px;padding:10px;border:1px solid #00b931;border-radius:12px;font-weight:900;text-align:center;${
                          locked ? "opacity:.5;cursor:not-allowed;" : ""
                        }">
                 <div style="font-weight:900;">-</div>
@@ -521,7 +521,7 @@
           g.id
         }" data-score-side="b" value="${escapeAttr(bScore)}"
                        inputmode="numeric" placeholder="0"
-                       style="width:64px;padding:10px;border:1px solid #e7e9f0;border-radius:12px;font-weight:900;text-align:center;${
+                       style="width:64px;padding:10px;border:1px solid #00b931;border-radius:12px;font-weight:900;text-align:center;${
                          locked ? "opacity:.5;cursor:not-allowed;" : ""
                        }">
               </div>
@@ -547,7 +547,7 @@
       if (!container) return;
 
       if (!supabaseClient) {
-        container.innerHTML = `<div style="padding:14px;border:1px solid #ffd0d0;background:#fff5f5;border-radius:16px;font-weight:800;">
+        container.innerHTML = `<div style="padding:14px;border:1px solid #ffd0d0;background:#0c471459;border-radius:16px;font-weight:800;color:#6b7280;">
             Supabase client not available. Ensure you added the Supabase CDN script and window.SUPABASE_URL / window.SUPABASE_ANON_KEY before schedule.js.
           </div>`;
         return;
