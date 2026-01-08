@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Adrenale 5 Basketball Showcase</title>
+    <link rel="stylesheet" href="./style.css" />
+    <!-- Optional: nicer font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="schedule.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+
+  <body data-theme="light">
+    <!-- NAV -->
+    <header class="nav">
+      <div class="container">
+        <div class="nav-inner">
+          <a class="brand" href="#">
+            <div class="logo">
+              <img src="assets/img/adrenale.png" alt="" class="logo-img" />
+            </div>
+            <div>Adrenale 5</div>
+          </a>
+
+          <nav class="nav-links" aria-label="Primary">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#events">Events</a>
+            <a href="#contact">Contact</a>
+          </nav>
+
+          <div class="nav-right">
+            <div class="toggle" title="Toggle light/dark">
+              <span>Light</span>
+              <div
+                class="switch"
+                id="themeSwitch"
+                role="switch"
+                aria-checked="false"
+                tabindex="0"
+              >
+                <div class="knob"></div>
+              </div>
+              <span>Dark</span>
+            </div>
+            <a class="btn primary cta-nav" href="#contact">Get in Touch</a>
+            <button class="mobile-menu-btn" id="menuBtn" aria-label="Open menu">
+              Menu
+            </button>
+          </div>
+        </div>
+
+        <div class="mobile-menu" id="mobileMenu">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#events">Events</a>
+          <a href="#shop">Shop</a>
+          <a href="#social">Social Wall</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="container">
+        <div class="hero-mid">
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              gap: 10px;
+              flex-wrap: wrap;
+            "
+          >
+            <span class="chip orange">MEN's Division</span>
+          </div>
+
+          <h1 class="hero-title">Adrenale 5 Basketball Showcase</h1>
+
+          <p class="hero-desc">
+            The Adrenale 5 Hoops is here to the Spring as the two companies join
+            forces to provide young athletes from diverse and underrepresented
+            backgrounds with a competitive platform to showcase their skills,
+            test their potential, and take meaningful steps toward their
+            athletic and personal goals.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn primary" id="registerBtn">
+              Register Team - &#8358;100k
+            </button>
+
+            <div id="scheduleContainer">
+              <button class="btn" id="scheduleBtn">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v13a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm13 9H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9zM6 8h12a1 1 0 0 1 0 2H6a1 1 0 1 1 0-2z"
+                  />
+                </svg>
+                Schedule
+              </button>
+            </div>
+          </div>
+
+          <div class="hero-mini">
+            <span class="divider-dot"></span>
+            <a href="#rules" id="rulesLink"
+              >View Tournament Rules &amp; Eligibility</a
+            >
+            <span class="divider-dot"></span>
+          </div>
+        </div>
+
+        <div class="strip" aria-label="Event quick facts">
+          <div class="strip-grid">
+            <div class="strip-item">
+              <div class="strip-ic">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v13a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm13 9H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div class="strip-k">Date</div>
+                <div class="strip-v">Feb 6-8, 2026</div>
+              </div>
+            </div>
+
+            <div class="strip-item">
+              <div class="strip-ic">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7zm0 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div class="strip-k">Venue</div>
+                <div class="strip-v">Dolphins Indoor Court</div>
+              </div>
+            </div>
+
+            <div class="strip-item">
+              <div class="strip-ic">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 2a9 9 0 0 1 9 9c0 5-4 9-9 11C7 20 3 16 3 11a9 9 0 0 1 9-9zm0 4a1 1 0 0 0-1 1v4.2l-2.1 2.1a1 1 0 1 0 1.4 1.4l2.4-2.4A1 1 0 0 0 13 12V7a1 1 0 0 0-1-1z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div class="strip-k">Division (Ages 14-18)</div>
+                <div class="strip-v">MEN</div>
+              </div>
+            </div>
+
+            <div class="strip-item">
+              <div class="strip-ic">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h3a1 1 0 0 1 0 2h-1.1l-1.4 12.1A3 3 0 0 1 14.5 24h-5a3 3 0 0 1-3-2.9L5.1 7H4a1 1 0 1 1 0-2h3V4zm2 1h6V4H9v1z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div class="strip-k">Prize</div>
+                <div class="strip-v">&#8358;1 million naira</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="grid-2">
+          <div>
+            <h2 class="section-title">About the Event</h2>
+            <p class="muted" style="margin: 0; font-size: 13px">
+              The Adrenale Sports Tournament is a celebration of talent,
+              opportunity, and purpose. Hosted by Adrenale Sports, the athletic
+              development arm of the Adrenale Foundation, this event is designed
+              to provide young athletes from diverse and underrepresented
+              backgrounds with a competitive platform to showcase their skills,
+              test their potential, and take meaningful steps toward their
+              athletic and personal goals.
+            </p>
+
+            <div style="margin-top: 18px; font-weight: 900; font-size: 13px">
+              Registration Includes
+            </div>
+
+            <div class="list">
+              <div class="li">
+                <div class="check">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M9.2 16.2 5.5 12.5a1 1 0 0 1 1.4-1.4l2.3 2.3 7.9-7.9a1 1 0 1 1 1.4 1.4l-9.3 9.3z"
+                    />
+                  </svg>
+                </div>
+                <div>3+ Game Guarantee</div>
+              </div>
+
+              <div class="li">
+                <div class="check">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M9.2 16.2 5.5 12.5a1 1 0 0 1 1.4-1.4l2.3 2.3 7.9-7.9a1 1 0 1 1 1.4 1.4l-9.3 9.3z"
+                    />
+                  </svg>
+                </div>
+                <div>Certified Officials</div>
+              </div>
+              <div class="li">
+                <div class="check">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M9.2 16.2 5.5 12.5a1 1 0 0 1 1.4-1.4l2.3 2.3 7.9-7.9a1 1 0 1 1 1.4 1.4l-9.3 9.3z"
+                    />
+                  </svg>
+                </div>
+                <div>Media Coverage</div>
+              </div>
+              <div class="li">
+                <div class="check">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M9.2 16.2 5.5 12.5a1 1 0 0 1 1.4-1.4l2.3 2.3 7.9-7.9a1 1 0 1 1 1.4 1.4l-9.3 9.3z"
+                    />
+                  </svg>
+                </div>
+                <div>Entertainment</div>
+              </div>
+            </div>
+            <div>
+              <br />
+            </div>
+            <div style="margin-top: 18px; font-weight: 900; font-size: 13px">
+              Tournament Registration Oppotrunities Include
+            </div>
+
+            <div class="list">
+              <div class="li">
+                <div class="check">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M9.2 16.2 5.5 12.5a1 1 0 0 1 1.4-1.4l2.3 2.3 7.9-7.9a1 1 0 1 1 1.4 1.4l-9.3 9.3z"
+                    />
+                  </svg>
+                </div>
+                <div>Possible Scholarship opportunities in the US</div>
+              </div>
+              <div class="li">
+                <div class="check">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M9.2 16.2 5.5 12.5a1 1 0 0 1 1.4-1.4l2.3 2.3 7.9-7.9a1 1 0 1 1 1.4 1.4l-9.3 9.3z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  Invitational workouts/workshop with NBA Development coaches
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="aside-stack">
+            <div class="card">
+              <div class="map" aria-hidden="true">
+                <div class="pin"></div>
+              </div>
+              <div class="card-pad">
+                <div class="aside-title">Venue</div>
+                <div class="aside-text">
+                  <strong style="color: var(--text)"
+                    >Dolphins Indoor Court</strong
+                  ><br />
+                  1, Olu Aboderin St, Lagos, Nigeria
+                </div>
+                <button class="mini-btn" id="directionsBtn">
+                  <a
+                    id="directionsBtn"
+                    href="https://maps.app.goo.gl/4YZPUqTBNyjCGgee7"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Get Directions
+                  </a>
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-pad">
+                <div class="aside-title">Contact Us</div>
+                <div class="contact">
+                  <div>Contact our tournament director for help.</div>
+                  <div>
+                    <span class="muted">Email: </span>
+                    <a href="mailto:ballarkafrica@gmail.com">
+                      ballarkafrica@gmail.com
+                    </a>
+                  </div>
+                  <div>
+                    <span class="muted">Phone: </span>
+                    <a href="tel:+2349067831477">09067831477</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section alt" id="events">
+      <div class="container">
+        <h2 class="section-title" style="margin-bottom: 14px">
+          Frequently Asked Questions
+        </h2>
+
+        <div class="faq" id="faq">
+          <div class="qa">
+            <button class="qbtn" type="button">
+              <span>When is the schedule released?</span>
+              <div class="chev">⌄</div>
+            </button>
+            <div class="ans">
+              <div class="ans-inner">
+                Schedules are typically published after registration closes and
+                divisions are finalized. You can also check “Schedule &amp;
+                Scores” once live.
+              </div>
+            </div>
+          </div>
+
+          <div class="qa">
+            <button class="qbtn" type="button">
+              <span>Do you offer a multiple team discount?</span>
+              <div class="chev">⌄</div>
+            </button>
+            <div class="ans">
+              <div class="ans-inner">
+                Discounts (if available) depend on the tournament cycle. Use
+                “Get in Touch” to confirm current multi-team pricing.
+              </div>
+            </div>
+          </div>
+
+          <div class="qa">
+            <button class="qbtn" type="button">
+              <span>Can I submit a schedule request?</span>
+              <div class="chev">⌄</div>
+            </button>
+            <div class="ans">
+              <div class="ans-inner">
+                Yes—requests can be considered, but they are not guaranteed.
+                Provide details early during registration or contact support.
+              </div>
+            </div>
+          </div>
+
+          <div class="qa">
+            <button class="qbtn" type="button">
+              <span>Is this event Stay to Play?</span>
+              <div class="chev">⌄</div>
+            </button>
+            <div class="ans">
+              <div class="ans-inner">
+                Hotel policy varies per event. Click “Hotel” to view recommended
+                lodging and any travel requirements.
+              </div>
+            </div>
+          </div>
+
+          <div class="qa">
+            <button class="qbtn" type="button">
+              <span>Where can I find media packages?</span>
+              <div class="chev">⌄</div>
+            </button>
+            <div class="ans">
+              <div class="ans-inner">
+                Media packages are available under “Media Packages &amp;
+                Merchandise” (Shop Now). On event weekend, limited onsite
+                options may exist.
+              </div>
+            </div>
+          </div>
+
+          <div class="qa">
+            <button class="qbtn" type="button">
+              <span>How many coaches are permitted per team?</span>
+              <div class="chev">⌄</div>
+            </button>
+            <div class="ans">
+              <div class="ans-inner">
+                Coach limits and bench rules are included in the tournament
+                rules/eligibility document. Click “View Tournament Rules &amp;
+                Eligibility.”
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="rules" style="height: 1px"></div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+      <div class="container">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <div class="brand" style="color: #fff">
+              <div class="logo">
+                <img src="assets/img/adrenale.png" alt="" class="logo-img" />
+              </div>
+              <div>Adrenale 5</div>
+            </div>
+            <p>We don't just build athletes, we build leaders.</p>
+          </div>
+
+          <div class="footer-col">
+            <h4>EVENTS</h4>
+            <a href="#events">Tournaments</a>
+            <a href="#events">Camps</a>
+            <a href="#rules">Tournament Rules</a>
+          </div>
+
+          <div class="footer-col">
+            <h4>ABOUT</h4>
+            <a href="#about">Our Story</a>
+            <a href="#about">Press &amp; Media</a>
+            <a href="#about">Gallery</a>
+          </div>
+
+          <div class="footer-col">
+            <h4>STAY IN THE GAME</h4>
+            <div style="color: rgba(231, 233, 239, 0.72); font-size: 12px">
+              Get updates on tournaments and exclusive content.
+            </div>
+            <form class="newsletter" id="newsletterForm">
+              <input
+                class="input"
+                type="email"
+                id="email"
+                placeholder="Your email"
+                required
+              />
+              <button class="send" type="submit" aria-label="Subscribe">
+                →
+              </button>
+            </form>
+
+            <div
+              style="
+                margin-top: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+              "
+            >
+              <div>
+                <div style="font-weight: 800; font-size: 12px">CONTACT</div>
+                <div
+                  style="
+                    color: rgba(231, 233, 239, 0.72);
+                    font-size: 12px;
+                    margin-top: 6px;
+                  "
+                >
+                  ballarkafrica@gmail.com<br />
+                  09067831477
+                </div>
+              </div>
+              <div class="social" aria-label="Social links">
+                <div class="soc" title="Instagram">◦</div>
+                <div class="soc" title="Facebook">f</div>
+                <div class="soc" title="X">x</div>
+                <div class="soc" title="YouTube">▶</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <div>© <span id="year"></span> Adrenale 5. All rights reserved.</div>
+          <div class="legal">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Sitemap</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal">
+      <div class="modal-backdrop" data-close="1"></div>
+
+      <div
+        class="modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Schedule"
+      >
+        <div class="modal-head">
+          <div class="modal-title">Schedule & Scores</div>
+          <button class="modal-close" id="closeSchedule" aria-label="Close">
+            ✕
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div id="scheduleModalContainer"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
