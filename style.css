@@ -225,6 +225,18 @@ button {
   padding: 10px 14px;
 }
 
+.cta-link {
+  color: #00b931;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cta-link:hover {
+  text-decoration: underline;
+  filter: brightness(1.1);
+}
+
 .mobile-menu-btn {
   display: none;
   border: 1px solid rgba(255, 255, 255, 0.16);
