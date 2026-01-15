@@ -70,7 +70,6 @@ document.getElementById("scheduleBtn").addEventListener("click", () => {
     console.error("initSchedule not found. Load schedule.js before script.js");
     return;
   }
-
   // Open modal
   modal.classList.add("open");
 

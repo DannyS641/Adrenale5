@@ -492,7 +492,6 @@
           g.timeSlot
         )} • ${escapeHtml(g.hour)} — ${escapeHtml(g.court)}
                 </div>
-                <div style="margin-top:8px;font-weight:800;color:#6b7280;font-size:12px;color:${
                   winner ? "#0f7a3b" : "#6b7280"
                 };">
                   ${
