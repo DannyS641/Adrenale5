@@ -12,7 +12,7 @@
   --green: #176306;
   --green2: #045d12;
 
-  --green: #1fb76b;
+  --green: #16854d;
   --pill: #eef2ff;
 
   --shadow: 0 10px 24px rgba(13, 17, 23, 0.08);
@@ -406,6 +406,17 @@ button {
 .card-pad {
   padding: 18px;
 }
+.card-pad {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.card-pad .mini-btn {
+  align-self: center;
+  margin-top: 12px;
+}
+
 .list {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -440,38 +451,45 @@ button {
   gap: 14px;
 }
 .map {
-  height: 150px;
-  background: radial-gradient(
-      circle at 40% 30%,
-      rgba(0, 255, 13, 0.18),
-      transparent 55%
-    ),
-    linear-gradient(135deg, rgba(90, 145, 255, 0.18), transparent 55%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0));
+  height: 180px;
   border-bottom: 1px solid var(--border);
   position: relative;
+  background-color: #e5e7eb;
+  background-image: url("assets/img/map.png"); /* your screenshot */
+  background-size: cover;
+  background-position: center;
 }
-.pin {
-  position: absolute;
-  left: 58%;
-  top: 46%;
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, var(--green), var(--green2));
-  box-shadow: 0 18px 30px #00ff2259;
-  transform: translate(-50%, -50%);
-}
-.pin:after {
+
+.map::after {
   content: "";
   position: absolute;
-  left: 50%;
-  top: 100%;
-  width: 10px;
-  height: 14px;
-  background: linear-gradient(180deg, var(--green2), #00b931);
-  clip-path: polygon(50% 100%, 0 0, 100% 0);
-  transform: translateX(-50%);
+  inset: 0;
+  background: rgba(17, 24, 39, 0.06);
+}
+
+[data-theme="dark"] .map::after {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.map-label {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #111827;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .map-label {
+  background: rgba(15, 23, 36, 0.92);
+  color: #e5e7eb;
+  border-color: #1f2937;
 }
 .aside-title {
   font-weight: 900;
@@ -484,7 +502,7 @@ button {
   margin: 0 0 10px;
 }
 .mini-btn {
-  width: 100%;
+  width: auto;
   border-radius: 999px;
   border: 1px solid rgba(2, 124, 8, 0.1);
   background: rgba(0, 255, 76, 0.08);
@@ -494,7 +512,7 @@ button {
   cursor: pointer;
 }
 .mini-btn:hover {
-  background: rgba(0, 255, 38, 0.12);
+  background: #00ff261f;
 }
 .contact {
   display: grid;
