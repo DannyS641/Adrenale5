@@ -1,19 +1,5 @@
 // schedule.js
-// Secure scores with Supabase (Auth) + Vercel API (/api/scores)
-// - Public users: read-only
-// - Only allowlisted admins (enforced server-side): can edit scores
-// - Auto-advance winners
-// - Lock Day 2 until Day 1 complete; Lock Day 3 until Day 2 complete
-// - 1 hour between games
-// - Day 3 bracket visualization
-//
-// Requirements (in your HTML BEFORE this file):
-// <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-// <script>window.SUPABASE_URL="..."; window.SUPABASE_ANON_KEY="...";</script>
-//
-// Optional teams input:
-// window.TOURNAMENT_TEAMS = ["Team 1", "Team 2", ... up to 16];
-// window.initSchedule("scheduleModalContainer");
+// Tournament Schedule UI + Supabase Auth + Vercel API (/api/scores)
 
 (function () {
   // -----------------------------
@@ -36,13 +22,38 @@
     return data?.session?.access_token || "";
   }
 
+  // ✅ Single source of truth for API base
+  function getApiBase() {
+    // If you want to override manually in HTML:
+    // <script>window.API_BASE_URL="https://yourdomain.vercel.app"</script>
+    if (window.API_BASE_URL)
+      return String(window.API_BASE_URL).replace(/\/$/, "");
+
+    // When running locally (live-server / localhost), call your deployed Vercel API
+    if (
+      location.hostname === "localhost" ||
+      location.hostname === "127.0.0.1"
+    ) {
+      return "https://adrenale5.vercel.app"; // <-- CHANGE if your domain differs
+    }
+
+    // When already on Vercel domain, relative works
+    return "";
+  }
+
   async function apiFetchScores() {
     const token = await getAccessToken();
-    const res = await fetch("/api/scores", {
+    const API_BASE = getApiBase();
+
+    // ✅ FIX: actually store res
+    const res = await fetch(`${API_BASE}/api/scores`, {
+      method: "GET",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
+
     const json = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(json.error || "Failed to load scores");
+
     return {
       scores: json.scores || {},
       canEdit: !!json.canEdit,
@@ -53,7 +64,9 @@
     const token = await getAccessToken();
     if (!token) throw new Error("Not logged in");
 
-    const res = await fetch("/api/scores", {
+    const API_BASE = getApiBase();
+
+    const res = await fetch(`${API_BASE}/api/scores`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,7 +88,6 @@
   }
 
   function parseTime12h(str) {
-    // "8:00 AM"
     const m = String(str)
       .trim()
       .match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
@@ -121,13 +133,9 @@
     return String(s).replace(/"/g, "&quot;");
   }
 
-  // State is in-memory only; persistent truth is Supabase via API
+  // In-memory only
   function loadState() {
     return { scores: {} };
-  }
-
-  function saveState(_) {
-    // no-op
   }
 
   function getTeamsFromAdmin(teamsOverride) {
@@ -145,7 +153,7 @@
 
   function buildGames(teams, config) {
     const court = config.courtName || "Dolphins Court";
-    const gap = 60; // 1 hour between games
+    const gap = 60; // 1 hour
 
     const d1MorningStart = config.day1MorningStart || "8:00 AM";
     const d1EveningStart = config.day1EveningStart || "4:00 PM";
@@ -174,7 +182,7 @@
       });
     }
 
-    // Day 2: 8 teams -> 4 games; winners of Day 1
+    // Day 2: winners of Day 1
     const day2 = [
       {
         id: "D2G1",
@@ -296,48 +304,135 @@
   }
 
   // -----------------------------
-  // UI
+  // UI Helpers (toast + login msg)
+  // -----------------------------
+  function showToast(container, text, type = "info") {
+    const toast = container.querySelector("#toast");
+    if (!toast) return;
+
+    toast.style.display = "block";
+    toast.textContent = text;
+
+    if (type === "success") {
+      toast.style.borderColor = "rgba(34,197,94,.5)";
+      toast.style.color = "#86efac";
+      toast.style.background = "rgba(34,197,94,.10)";
+    } else if (type === "error") {
+      toast.style.borderColor = "rgba(239,68,68,.5)";
+      toast.style.color = "#fca5a5";
+      toast.style.background = "rgba(239,68,68,.10)";
+    } else {
+      toast.style.borderColor = "rgba(255,255,255,.12)";
+      toast.style.color = "#e5e7eb";
+      toast.style.background = "rgba(0,0,0,.22)";
+    }
+
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      toast.style.display = "none";
+    }, 3500);
+  }
+
+  function setLoginMsg(container, text, type) {
+    const el = container.querySelector("#loginMsg");
+    if (!el) return;
+
+    el.style.display = "block";
+    el.textContent = text;
+
+    if (type === "success") {
+      el.style.border = "1px solid rgba(34,197,94,.5)";
+      el.style.background = "rgba(34,197,94,.12)";
+      el.style.color = "#86efac";
+    } else {
+      el.style.border = "1px solid rgba(239,68,68,.5)";
+      el.style.background = "rgba(239,68,68,.12)";
+      el.style.color = "#fca5a5";
+    }
+  }
+
+  // -----------------------------
+  // UI Build
   // -----------------------------
   function buildUI(container) {
     container.innerHTML = `
       <div class="schedule-controls" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
-        <select id="dayFilter" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:700;">
+        <select id="dayFilter" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:800;">
           <option value="All">All Days</option>
           <option value="Day 1">Day 1</option>
           <option value="Day 2">Day 2</option>
           <option value="Day 3">Day 3</option>
         </select>
 
-        <select id="timeFilter" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:700;">
+        <select id="timeFilter" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:800;">
           <option value="All">All Times</option>
           <option value="Morning">Morning</option>
           <option value="Evening">Evening</option>
         </select>
 
-        <button id="printSchedule" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:800;color:#6b7280;cursor:pointer;">
+        <button id="printSchedule" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:900;color:#e5e7eb;background:transparent;cursor:pointer;">
           Print Schedule (PDF)
         </button>
 
-        <button id="adminLoginBtn" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:800;color:#6b7280;cursor:pointer;">
+        <button id="adminLoginBtn" style="padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:900;color:#e5e7eb;background:transparent;cursor:pointer;">
           Admin Login
         </button>
 
-        <button id="adminLogoutBtn" style="display:none;padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:800;color:#6b7280;cursor:pointer;">
+        <button id="adminLogoutBtn" style="display:none;padding:10px 14px;border-radius:999px;border:1px solid #00b931;font-weight:900;color:#e5e7eb;background:transparent;cursor:pointer;">
           Logout
         </button>
       </div>
 
-      <div id="adminStatus" style="margin:-2px 0 12px 0;font-weight:800;color:#6b7280;color:#6b7280;font-size:12px;">
+      <div id="adminStatus" style="margin:-2px 0 12px 0;font-weight:900;color:#9ca3af;font-size:12px;">
         Viewing mode: Public (read-only)
       </div>
 
-      <div id="lockNotice" style="display:none;margin:10px 0;padding:10px 12px;border-radius:14px;border:1px solid #ffe1c8;background:#0c4714597f0;font-weight:700;color:#9a4a00;"></div>
+      <div id="toast" style="display:none;margin:10px 0;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.12);font-weight:900;"></div>
+
+      <div id="lockNotice" style="display:none;margin:10px 0;padding:10px 12px;border-radius:14px;border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.08);font-weight:900;color:#fcd34d;"></div>
 
       <div id="scheduleList"></div>
 
       <div id="day3BracketWrap" style="margin-top:18px;display:none;">
-        <div style="font-weight:900;margin-bottom:10px;">Day 3 Bracket</div>
+        <div style="font-weight:1000;margin-bottom:10px;color:#e5e7eb;">Day 3 Bracket</div>
         <div id="day3Bracket"></div>
+      </div>
+
+      <!-- Login Modal -->
+      <div id="loginModalBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+        <div style="width:min(460px,100%);border-radius:18px;border:1px solid rgba(255,255,255,.12);background:#0b1220;box-shadow:0 20px 70px rgba(0,0,0,.6);overflow:hidden;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 14px;border-bottom:1px solid rgba(255,255,255,.08);">
+            <div style="font-weight:1000;color:#e5e7eb;">Admin Login</div>
+            <button id="loginClose" style="width:38px;height:38px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#e5e7eb;cursor:pointer;">✕</button>
+          </div>
+
+          <div style="padding:14px;">
+            <div style="display:grid;gap:10px;">
+              <div>
+                <label style="display:block;font-size:12px;color:#9ca3af;font-weight:900;margin-bottom:6px;">Email</label>
+                <input id="loginEmail" type="email" placeholder="admin@email.com"
+                  style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#e5e7eb;outline:none;">
+              </div>
+
+              <div>
+                <label style="display:block;font-size:12px;color:#9ca3af;font-weight:900;margin-bottom:6px;">Password</label>
+                <input id="loginPassword" type="password" placeholder="••••••••"
+                  style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#e5e7eb;outline:none;">
+              </div>
+
+              <div id="loginMsg" style="display:none;padding:10px 12px;border-radius:12px;font-weight:1000;"></div>
+
+              <button id="loginSubmit"
+                style="padding:12px 14px;border-radius:999px;border:1px solid #00b931;background:#00b931;color:#07110a;font-weight:1000;cursor:pointer;">
+                Sign in
+              </button>
+
+              <div style="font-size:12px;color:#9ca3af;font-weight:800;line-height:1.4;">
+                Note: You must also be allowlisted (Vercel env SCORE_ADMIN_USER_IDS) to edit scores.
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -346,39 +441,38 @@
     const s = state.scores?.[gameId] || {};
     const aScore = s.a ?? "";
     const bScore = s.b ?? "";
+
     return `
-      <div style="border:1px solid #00b931;border-radius:16px;padding:12px;background:#0c471459;">
-        <div style="font-weight:900;margin-bottom:8px;">${escapeHtml(
+      <div style="border:1px solid rgba(0,185,49,.6);border-radius:16px;padding:12px;background:rgba(12,71,20,.35);">
+        <div style="font-weight:1000;margin-bottom:8px;color:#e5e7eb;">${escapeHtml(
           title
         )}</div>
+
         <div style="display:grid;gap:8px;">
           <div style="display:flex;justify-content:space-between;gap:10px;">
-            <div style="font-weight:800;color:#6b7280;">${escapeHtml(a)}</div>
-            <div style="display:flex;gap:6px;align-items:center;">
-              <input ${
-                locked ? "disabled" : ""
-              } data-score-game="${gameId}" data-score-side="a" value="${escapeAttr(
+            <div style="font-weight:900;color:#9ca3af;">${escapeHtml(a)}</div>
+            <input ${
+              locked ? "disabled" : ""
+            } data-score-game="${gameId}" data-score-side="a" value="${escapeAttr(
       aScore
     )}"
-                     inputmode="numeric" placeholder="0"
-                     style="width:60px;padding:8px;border:1px solid #00b931;border-radius:12px;font-weight:800;color:#6b7280;text-align:center;${
-                       locked ? "opacity:.5;cursor:not-allowed;" : ""
-                     }">
-            </div>
+              inputmode="numeric" placeholder="0"
+              style="width:60px;padding:8px;border:1px solid rgba(0,185,49,.7);border-radius:12px;font-weight:1000;color:#e5e7eb;background:rgba(0,0,0,.25);text-align:center;${
+                locked ? "opacity:.5;cursor:not-allowed;" : ""
+              }">
           </div>
+
           <div style="display:flex;justify-content:space-between;gap:10px;">
-            <div style="font-weight:800;color:#6b7280;">${escapeHtml(b)}</div>
-            <div style="display:flex;gap:6px;align-items:center;">
-              <input ${
-                locked ? "disabled" : ""
-              } data-score-game="${gameId}" data-score-side="b" value="${escapeAttr(
+            <div style="font-weight:900;color:#9ca3af;">${escapeHtml(b)}</div>
+            <input ${
+              locked ? "disabled" : ""
+            } data-score-game="${gameId}" data-score-side="b" value="${escapeAttr(
       bScore
     )}"
-                     inputmode="numeric" placeholder="0"
-                     style="width:60px;padding:8px;border:1px solid #00b931;border-radius:12px;font-weight:800;color:#6b7280;text-align:center;${
-                       locked ? "opacity:.5;cursor:not-allowed;" : ""
-                     }">
-            </div>
+              inputmode="numeric" placeholder="0"
+              style="width:60px;padding:8px;border:1px solid rgba(0,185,49,.7);border-radius:12px;font-weight:1000;color:#e5e7eb;background:rgba(0,0,0,.25);text-align:center;${
+                locked ? "opacity:.5;cursor:not-allowed;" : ""
+              }">
           </div>
         </div>
       </div>
@@ -402,7 +496,6 @@
     };
 
     const champ = getWinner("D3F", state) || "TBD";
-
     const locked = lockedDays["Day 3"] || !canEdit;
 
     return `
@@ -427,7 +520,7 @@
         </div>
 
         <div style="display:grid;gap:10px;justify-items:center;">
-          <div style="font-weight:900;">Final</div>
+          <div style="font-weight:1000;color:#e5e7eb;">Final</div>
           ${bracketMatch(
             "Championship",
             finalTeams.teamA,
@@ -439,8 +532,8 @@
         </div>
 
         <div style="display:grid;gap:10px;justify-items:center;">
-          <div style="font-weight:900;">Champion</div>
-          <div style="padding:12px 14px;border:1px solid #00b931;border-radius:16px;min-width:220px;text-align:center;font-weight:900;background:#0c471459;">
+          <div style="font-weight:1000;color:#e5e7eb;">Champion</div>
+          <div style="padding:12px 14px;border:1px solid rgba(0,185,49,.6);border-radius:16px;min-width:220px;text-align:center;font-weight:1000;background:rgba(12,71,20,.35);color:#e5e7eb;">
             ${escapeHtml(champ)}
           </div>
         </div>
@@ -453,7 +546,6 @@
       .map((g) => {
         const teams = resolveTeamsForGame(g, state);
 
-        // Ensure score record exists
         if (!state.scores[g.id]) {
           state.scores[g.id] = {
             teamA: teams.teamA,
@@ -474,64 +566,67 @@
         const winner = getWinner(g.id, state);
 
         const label = g.label
-          ? `<div style="font-size:12px;font-weight:900;color:#6b7280;">${escapeHtml(
+          ? `<div style="font-size:12px;font-weight:1000;color:#9ca3af;">${escapeHtml(
               g.label
             )}</div>`
           : "";
 
         return `
-          <div class="game-card" style="border:1px solid #00b931;border-radius:16px;padding:14px;margin-bottom:12px;background:#0c471459;">
-            ${label}
-            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-              <div>
-                <div style="font-weight:900;">${escapeHtml(
-                  teams.teamA
-                )} vs ${escapeHtml(teams.teamB)}</div>
-                <div style="margin-top:6px;color:#6b7280;font-weight:700;font-size:12px;">
-                  ${escapeHtml(g.day)} • ${escapeHtml(
-          g.timeSlot
-        )} • ${escapeHtml(g.hour)} — ${escapeHtml(g.court)}
-                </div>
-                <div style="margin-top:6px;font-size:13px;font-weight:800;color:${
-                  winner ? "#0f7a3b" : "#6b7280"
-                };">
-                  ${
-                    winner
-                      ? `Winner: ${escapeHtml(winner)}`
-                      : "Enter scores to determine winner (no ties)."
-                  }
-                </div>
+        <div class="game-card" style="border:1px solid rgba(0,185,49,.6);border-radius:16px;padding:14px;margin-bottom:12px;background:rgba(12,71,20,.35);">
+          ${label}
+
+          <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+              <div style="font-weight:1000;color:#e5e7eb;">${escapeHtml(
+                teams.teamA
+              )} vs ${escapeHtml(teams.teamB)}</div>
+              <div style="margin-top:6px;color:#9ca3af;font-weight:900;font-size:12px;">
+                ${escapeHtml(g.day)} • ${escapeHtml(g.timeSlot)} • ${escapeHtml(
+          g.hour
+        )} — ${escapeHtml(g.court)}
+              </div>
+
+              <div style="margin-top:6px;font-size:13px;font-weight:1000;color:${
+                winner ? "#86efac" : "#9ca3af"
+              };">
                 ${
-                  !canEdit
-                    ? `<div style="margin-top:6px;font-size:12px;font-weight:800;color:#6b7280;color:#6b7280;"></div>`
-                    : ""
+                  winner
+                    ? `Winner: ${escapeHtml(winner)}`
+                    : "Enter scores to determine winner (no ties)."
                 }
               </div>
 
-              <div style="display:flex;gap:10px;align-items:center;">
-                <input ${locked ? "disabled" : ""} data-score-game="${
+              ${
+                !lockedDays[g.day] && !canEdit
+                  ? `<div style="margin-top:6px;font-size:12px;font-weight:900;color:#fca5a5;">
+                     Read-only. Login as admin to edit.
+                   </div>`
+                  : ""
+              }
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:center;">
+              <input ${locked ? "disabled" : ""} data-score-game="${
           g.id
         }" data-score-side="a" value="${escapeAttr(aScore)}"
-                       inputmode="numeric" placeholder="0"
-                       style="width:64px;padding:10px;border:1px solid #00b931;border-radius:12px;font-weight:900;text-align:center;${
-                         locked ? "opacity:.5;cursor:not-allowed;" : ""
-                       }">
-                <div style="font-weight:900;">-</div>
-                <input ${locked ? "disabled" : ""} data-score-game="${
+                inputmode="numeric" placeholder="0"
+                style="width:64px;padding:10px;border:1px solid rgba(0,185,49,.7);border-radius:12px;font-weight:1000;text-align:center;color:#e5e7eb;background:rgba(0,0,0,.25);${
+                  locked ? "opacity:.5;cursor:not-allowed;" : ""
+                }">
+              <div style="font-weight:1000;color:#e5e7eb;">-</div>
+              <input ${locked ? "disabled" : ""} data-score-game="${
           g.id
         }" data-score-side="b" value="${escapeAttr(bScore)}"
-                       inputmode="numeric" placeholder="0"
-                       style="width:64px;padding:10px;border:1px solid #00b931;border-radius:12px;font-weight:900;text-align:center;${
-                         locked ? "opacity:.5;cursor:not-allowed;" : ""
-                       }">
-              </div>
+                inputmode="numeric" placeholder="0"
+                style="width:64px;padding:10px;border:1px solid rgba(0,185,49,.7);border-radius:12px;font-weight:1000;text-align:center;color:#e5e7eb;background:rgba(0,0,0,.25);${
+                  locked ? "opacity:.5;cursor:not-allowed;" : ""
+                }">
             </div>
           </div>
-        `;
+        </div>
+      `;
       })
       .join("");
-
-    saveState(state);
   }
 
   // -----------------------------
@@ -547,15 +642,17 @@
       if (!container) return;
 
       if (!supabaseClient) {
-        container.innerHTML = `<div style="padding:14px;border:1px solid #ffd0d0;background:#0c471459;border-radius:16px;font-weight:800;color:#6b7280;">
-            Supabase client not available. Ensure you added the Supabase CDN script and window.SUPABASE_URL / window.SUPABASE_ANON_KEY before schedule.js.
+        container.innerHTML = `
+          <div style="padding:14px;border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.08);border-radius:16px;font-weight:1000;color:#fca5a5;">
+            Supabase client not available. Ensure:
+            <br>1) Supabase CDN script is added
+            <br>2) window.SUPABASE_URL and window.SUPABASE_ANON_KEY are set
+            <br>3) schedule.js is loaded AFTER those.
           </div>`;
         return;
       }
 
       const state = loadState();
-
-      // Build schedule structure
       const teams = getTeamsFromAdmin(options.teams);
       const games = buildGames(teams, {
         courtName: options.courtName || "Dolphins Court",
@@ -567,24 +664,29 @@
         day3EveningStart: options.day3EveningStart || "5:00 PM",
       });
 
-      // Load scores from server
       let canEdit = false;
-      try {
-        const remote = await apiFetchScores();
-        canEdit = remote.canEdit;
 
-        // Merge remote scores into state (preserve team names later in renderGames)
-        for (const [gameId, s] of Object.entries(remote.scores || {})) {
-          if (!state.scores[gameId])
-            state.scores[gameId] = { a: "", b: "", teamA: "", teamB: "" };
-          state.scores[gameId].a = s.a ?? "";
-          state.scores[gameId].b = s.b ?? "";
+      async function refreshCanEditAndScores() {
+        try {
+          const remote = await apiFetchScores();
+          canEdit = remote.canEdit;
+
+          for (const [gameId, s] of Object.entries(remote.scores || {})) {
+            if (!state.scores[gameId])
+              state.scores[gameId] = { a: "", b: "", teamA: "", teamB: "" };
+            state.scores[gameId].a = s.a ?? "";
+            state.scores[gameId].b = s.b ?? "";
+          }
+          return true;
+        } catch (e) {
+          canEdit = false;
+          console.warn(e?.message || e);
+          return false;
         }
-      } catch (e) {
-        console.warn(e?.message || e);
       }
 
-      // Render UI
+      const okFetch = await refreshCanEditAndScores();
+
       buildUI(container);
 
       const list = container.querySelector("#scheduleList");
@@ -598,20 +700,11 @@
       const loginBtn = container.querySelector("#adminLoginBtn");
       const logoutBtn = container.querySelector("#adminLogoutBtn");
 
-      async function refreshCanEditAndScores() {
-        try {
-          const remote = await apiFetchScores();
-          canEdit = remote.canEdit;
-          for (const [gameId, s] of Object.entries(remote.scores || {})) {
-            if (!state.scores[gameId])
-              state.scores[gameId] = { a: "", b: "", teamA: "", teamB: "" };
-            state.scores[gameId].a = s.a ?? "";
-            state.scores[gameId].b = s.b ?? "";
-          }
-        } catch (e) {
-          console.warn(e?.message || e);
-        }
-      }
+      const loginBackdrop = container.querySelector("#loginModalBackdrop");
+      const loginClose = container.querySelector("#loginClose");
+      const loginEmail = container.querySelector("#loginEmail");
+      const loginPassword = container.querySelector("#loginPassword");
+      const loginSubmit = container.querySelector("#loginSubmit");
 
       function updateAdminStatusUI() {
         if (canEdit) {
@@ -667,54 +760,116 @@
         updateAdminStatusUI();
       }
 
-      // Admin login (prompt-based; replace later with a form if you want)
-      loginBtn.addEventListener("click", async () => {
-        const email = prompt("Admin email:");
-        const password = prompt("Password:");
-        if (!email || !password) return;
+      function openLoginModal() {
+        const msg = container.querySelector("#loginMsg");
+        if (msg) msg.style.display = "none";
+        loginEmail.value = "";
+        loginPassword.value = "";
+        loginBackdrop.style.display = "flex";
+        setTimeout(() => loginEmail.focus(), 50);
+      }
 
-        const { error } = await supabaseClient.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) {
-          alert(error.message);
+      function closeLoginModal() {
+        loginBackdrop.style.display = "none";
+      }
+
+      loginBtn.addEventListener("click", openLoginModal);
+      loginClose.addEventListener("click", closeLoginModal);
+      loginBackdrop.addEventListener("click", (e) => {
+        if (e.target === loginBackdrop) closeLoginModal();
+      });
+
+      loginSubmit.addEventListener("click", async () => {
+        const email = (loginEmail.value || "").trim();
+        const password = loginPassword.value || "";
+
+        if (!email || !password) {
+          setLoginMsg(container, "Please enter email and password.", "error");
+          showToast(container, "Login failed.", "error");
           return;
         }
 
-        await refreshCanEditAndScores();
-        await render();
+        loginSubmit.disabled = true;
+        const prevText = loginSubmit.textContent;
+        loginSubmit.textContent = "Signing in...";
+
+        try {
+          const { error } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+          if (error) {
+            setLoginMsg(container, "Login failed: " + error.message, "error");
+            showToast(container, "Login failed.", "error");
+            return;
+          }
+
+          const ok = await refreshCanEditAndScores();
+
+          if (!ok) {
+            setLoginMsg(
+              container,
+              "Logged in, but failed to reach /api/scores.",
+              "error"
+            );
+            showToast(container, "Login OK, but API fetch failed.", "error");
+            await render();
+            return;
+          }
+
+          if (!canEdit) {
+            setLoginMsg(
+              container,
+              "Login successful, but you are NOT authorized to edit. Add your Supabase user ID to Vercel env SCORE_ADMIN_USER_IDS.",
+              "error"
+            );
+            showToast(container, "Logged in but not authorized.", "error");
+            await render();
+            return;
+          }
+
+          setLoginMsg(
+            container,
+            "Login successful. Admin editing enabled.",
+            "success"
+          );
+          showToast(container, "Admin mode enabled.", "success");
+          await render();
+
+          setTimeout(() => closeLoginModal(), 700);
+        } finally {
+          loginSubmit.disabled = false;
+          loginSubmit.textContent = prevText;
+        }
       });
 
       logoutBtn.addEventListener("click", async () => {
         await supabaseClient.auth.signOut();
         canEdit = false;
-        await refreshCanEditAndScores(); // will come back with canEdit=false
+        await refreshCanEditAndScores();
+        showToast(container, "Logged out.", "info");
         await render();
       });
 
-      // Also react to auth changes (if session refreshes)
       supabaseClient.auth.onAuthStateChange(async () => {
         await refreshCanEditAndScores();
         await render();
       });
 
-      // Delegate score input
       container.addEventListener("input", async (e) => {
         const el = e.target;
         if (!(el instanceof HTMLElement)) return;
         if (!el.matches("input[data-score-game][data-score-side]")) return;
 
-        // Enforce client-side read-only too (server enforces regardless)
         if (!canEdit) {
-          // revert by re-rendering from state
           await render();
           return;
         }
 
         const gameId = el.getAttribute("data-score-game");
-        const side = el.getAttribute("data-score-side"); // "a" or "b"
-        const val = el.value.replace(/[^\d]/g, "");
+        const side = el.getAttribute("data-score-side");
+        const val = String(el.value || "").replace(/[^\d]/g, "");
         el.value = val;
 
         const game = games.all.find((g) => g.id === gameId);
@@ -726,7 +881,6 @@
           return;
         }
 
-        // Ensure record exists
         if (!state.scores[gameId]) {
           const teamsNow = resolveTeamsForGame(game, state);
           state.scores[gameId] = {
@@ -737,23 +891,21 @@
           };
         }
 
-        // Keep team names current for winner calc
         const teamsNow = resolveTeamsForGame(game, state);
         state.scores[gameId].teamA = teamsNow.teamA;
         state.scores[gameId].teamB = teamsNow.teamB;
 
         state.scores[gameId][side] = val;
 
-        // Save only when both set and not tied
         const aVal = state.scores[gameId].a;
         const bVal = state.scores[gameId].b;
 
         if (aVal !== "" && bVal !== "" && Number(aVal) !== Number(bVal)) {
           try {
             await apiSaveScore(gameId, Number(aVal), Number(bVal));
+            showToast(container, "Score saved.", "success");
           } catch (err) {
-            alert(err?.message || "Save failed");
-            // Refresh from server to avoid client drifting
+            showToast(container, err?.message || "Save failed", "error");
             await refreshCanEditAndScores();
           }
         }
@@ -766,29 +918,15 @@
 
       container
         .querySelector("#printSchedule")
-        .addEventListener("click", () => {
-          window.print();
-        });
+        .addEventListener("click", () => window.print());
 
-      // Reset scores: only admins can actually clear server state.
-      // Here we just clear the in-memory UI and prompt you to clear rows in Supabase if needed.
-      container
-        .querySelector("#resetScores")
-        ?.addEventListener("click", async () => {
-          if (!canEdit) {
-            alert("Only admins can reset scores.");
-            return;
-          }
-          const ok = confirm(
-            "This will clear local UI state and reload from server. To fully reset, delete rows in Supabase 'scores' table. Continue?"
-          );
-          if (!ok) return;
-
-          // Clear local, then reload from server
-          state.scores = {};
-          await refreshCanEditAndScores();
-          await render();
-        });
+      if (!okFetch) {
+        showToast(
+          container,
+          "Warning: /api/scores not reachable or returned error.",
+          "error"
+        );
+      }
 
       await render();
     })();

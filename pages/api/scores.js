@@ -10,6 +10,24 @@ const ALLOWLIST = (process.env.SCORE_ADMIN_USER_IDS || "")
   .map((id) => id.trim())
   .filter(Boolean);
 
+function getBearerToken(req) {
+  const auth = req.headers.authorization || "";
+  if (!auth.startsWith("Bearer ")) return "";
+  return auth.slice("Bearer ".length).trim();
+}
+
+async function canEditFromRequest(req) {
+  const token = getBearerToken(req);
+  if (!token) return false;
+
+  const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(
+    token
+  );
+  if (userErr || !userData?.user) return false;
+
+  return ALLOWLIST.includes(userData.user.id);
+}
+
 export default async function handler(req, res) {
   try {
     // ---------- READ (public) ----------
@@ -27,7 +45,10 @@ export default async function handler(req, res) {
         map[row.game_id] = { a: row.a, b: row.b };
       }
 
-      return res.status(200).json({ scores: map });
+      // ✅ FIX: return canEdit too (your frontend expects it)
+      const canEdit = await canEditFromRequest(req);
+
+      return res.status(200).json({ scores: map, canEdit });
     }
 
     // ---------- WRITE (admin only) ----------
@@ -37,7 +58,7 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: "Missing token" });
       }
 
-      const token = auth.replace("Bearer ", "");
+      const token = auth.replace("Bearer ", "").trim();
       const { data: userData, error: userErr } =
         await supabaseAdmin.auth.getUser(token);
 
@@ -50,7 +71,7 @@ export default async function handler(req, res) {
         return res.status(403).json({ error: "Not allowed" });
       }
 
-      const { gameId, a, b } = req.body;
+      const { gameId, a, b } = req.body || {};
       if (!gameId) {
         return res.status(400).json({ error: "Missing gameId" });
       }
@@ -64,12 +85,15 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "No ties allowed" });
       }
 
-      const { error } = await supabaseAdmin.from("scores").upsert({
-        game_id: gameId,
-        a: aNum,
-        b: bNum,
-        updated_at: new Date().toISOString(),
-      });
+      const { error } = await supabaseAdmin.from("scores").upsert(
+        {
+          game_id: gameId,
+          a: aNum,
+          b: bNum,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "game_id" }
+      );
 
       if (error) {
         return res.status(500).json({ error: error.message });
@@ -79,8 +103,8 @@ export default async function handler(req, res) {
     }
 
     res.setHeader("Allow", ["GET", "POST"]);
-    res.status(405).end("Method Not Allowed");
+    return res.status(405).end("Method Not Allowed");
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 }

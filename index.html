@@ -18,6 +18,9 @@
         "sb_publishable_Cc2z2160odpHE5Xu1mb2nA_2AZ7ECNs";
       defer;
     </script>
+    <script>
+      window.API_BASE_URL = "https://adrenale5.vercel.app";
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="schedule.js" defer></script>
     <script src="script.js" defer></script>
@@ -28,11 +31,10 @@
     <header class="nav">
       <div class="container">
         <div class="nav-inner">
-          <a class="brand" href="#">
-            <div class="logo">
-              <img src="assets/img/adrenale.png" alt="" class="logo-img" />
-            </div>
-            <div>ADRENALE 5</div>
+          <a class="brand" href="#home">
+            <img class="logo" src="assets/img/adrenale.png" alt="Adrenale 5" />
+            <span class="brand-full">ADRENALE 5</span>
+            <span class="brand-short">A5</span>
           </a>
 
           <nav class="nav-links" aria-label="Primary">
@@ -43,19 +45,24 @@
           </nav>
 
           <div class="nav-right">
-            <div class="toggle" title="Toggle light/dark">
-              <span>Light</span>
-              <div
-                class="switch"
-                id="themeSwitch"
-                role="switch"
-                aria-checked="false"
-                tabindex="0"
-              >
-                <div class="knob"></div>
+            <div
+              class="toggle"
+              role="switch"
+              aria-checked="false"
+              id="themeSwitch"
+              tabindex="0"
+            >
+              <span class="toggle-ic sun" aria-hidden="true">☀️</span>
+              <span class="toggle-txt">Light</span>
+
+              <div class="switch" aria-hidden="true">
+                <span class="knob"></span>
               </div>
-              <span>Dark</span>
+
+              <span class="toggle-txt">Dark</span>
+              <span class="toggle-ic moon" aria-hidden="true">🌙</span>
             </div>
+
             <a class="btn primary cta-nav" href="#contact">Get in Touch</a>
             <button class="mobile-menu-btn" id="menuBtn" aria-label="Open menu">
               Menu
@@ -457,7 +464,7 @@
           <div class="footer-brand">
             <div class="brand" style="color: #fff">
               <div class="logo">
-                <img src="assets/img/adrenale.png" alt="" class="logo-img" />
+                <img src="assets/img/adrenale.png" alt="" class="logo" />
               </div>
               <div>Adrenale 5</div>
             </div>
