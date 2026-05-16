@@ -22,7 +22,6 @@
       window.API_BASE_URL = "https://adrenale5.vercel.app";
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="schedule.js" defer></script>
     <script src="script.js" defer></script>
   </head>
 
@@ -107,20 +106,11 @@
           </p>
 
           <div class="hero-actions">
-            <button class="btn primary" id="registerBtn">
-              Register Team - &#8358;100k
+            <a href="https://forms.gle/TsSZFLHpd7UdBhQM7">
+              <button class="btn primary" id="registerBtn">
+              Register
             </button>
-
-            <div id="scheduleContainer">
-              <button class="btn" id="scheduleBtn">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v13a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm13 9H4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9zM6 8h12a1 1 0 0 1 0 2H6a1 1 0 1 1 0-2z"
-                  />
-                </svg>
-                Schedule
-              </button>
-            </div>
+            </a>
           </div>
         </div>
 
@@ -136,7 +126,7 @@
               </div>
               <div>
                 <div class="strip-k">Date</div>
-                <div class="strip-v">Feb 6-8, 2026</div>
+                <div class="strip-v">May 23, 2026</div>
               </div>
             </div>
 
@@ -163,24 +153,11 @@
                 </svg>
               </div>
               <div>
-                <div class="strip-k">Division (All Ages)</div>
+                <div class="strip-k">Division (13 - 19)</div>
                 <div class="strip-v">MEN</div>
               </div>
             </div>
 
-            <div class="strip-item">
-              <div class="strip-ic">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1h3a1 1 0 0 1 0 2h-1.1l-1.4 12.1A3 3 0 0 1 14.5 24h-5a3 3 0 0 1-3-2.9L5.1 7H4a1 1 0 1 1 0-2h3V4zm2 1h6V4H9v1z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <div class="strip-k">Prize</div>
-                <div class="strip-v">&#8358;1 million naira</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -192,13 +169,14 @@
         <div class="grid-2">
           <div>
             <h2 class="section-title">
-              About the Event (Click
+              About the Event 
+              <!-- (Click
               <a
                 href="https://youtu.be/zBoq6n7R6W4"
                 class="cta-link"
                 target="_blank"
                 >here</a
-              >)
+              >) -->
             </h2>
             <p class="muted" style="margin: 0; font-size: 13px">
               The Adrenale Sports Tournament is a celebration of talent,
@@ -215,7 +193,7 @@
             </div>
 
             <div class="list">
-              <div class="li">
+              <!-- <div class="li">
                 <div class="check">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path
@@ -225,7 +203,7 @@
                   </svg>
                 </div>
                 <div>3+ Game Guarantee</div>
-              </div>
+              </div> -->
 
               <div class="li">
                 <div class="check">
@@ -302,13 +280,13 @@
             <div style="margin-top: 18px; font-weight: 900; font-size: 13px">
               <div class="hero-mini">
                 <span class="divider-dot"></span>
-                <a
+                <!-- <a
                   href="/assets/documents/A5 Info- Rules Sheet.pdf"
                   id="rulesLink"
                   target="_blank"
                   style="font-size: 14.5px; margin-top: 28px"
                   >View Tournament Eligibility &amp; Rules</a
-                >
+                > -->
                 <span class="divider-dot"></span>
               </div>
             </div>
@@ -353,7 +331,7 @@
                   </div>
                   <div>
                     <span class="muted">Phone: </span>
-                    <a href="tel:+2349067831477">09067831477</a>
+                    <a href="tel:+2349067831477">08068655213</a>
                   </div>
                 </div>
               </div>
@@ -373,20 +351,6 @@
         <div class="faq" id="faq">
           <div class="qa">
             <button class="qbtn" type="button">
-              <span>When is the schedule released?</span>
-              <div class="chev">⌄</div>
-            </button>
-            <div class="ans">
-              <div class="ans-inner">
-                Schedules are typically published after registration closes and
-                divisions are finalized. You can also check “Schedule &amp;
-                Scores” once live.
-              </div>
-            </div>
-          </div>
-
-          <div class="qa">
-            <button class="qbtn" type="button">
               <span>Do you offer a multiple team discount?</span>
               <div class="chev">⌄</div>
             </button>
@@ -394,19 +358,6 @@
               <div class="ans-inner">
                 Discounts (if available) depend on the tournament cycle. Use
                 “Get in Touch” to confirm current multi-team pricing.
-              </div>
-            </div>
-          </div>
-
-          <div class="qa">
-            <button class="qbtn" type="button">
-              <span>Can I submit a schedule request?</span>
-              <div class="chev">⌄</div>
-            </button>
-            <div class="ans">
-              <div class="ans-inner">
-                Yes. Requests can be considered, but they are not guaranteed.
-                Provide details early during registration or contact support.
               </div>
             </div>
           </div>
@@ -522,7 +473,7 @@
                   "
                 >
                   ballarkafrica@gmail.com<br />
-                  09067831477
+                  08068655213
                 </div>
               </div>
               <div class="social" aria-label="Social links">
@@ -545,28 +496,5 @@
         </div>
       </div>
     </footer>
-
-    <!-- Schedule Modal -->
-    <div id="scheduleModal" class="modal">
-      <div class="modal-backdrop" data-close="1"></div>
-
-      <div
-        class="modal-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Schedule"
-      >
-        <div class="modal-head">
-          <div class="modal-title">Schedule & Scores</div>
-          <button class="modal-close" id="closeSchedule" aria-label="Close">
-            ✕
-          </button>
-        </div>
-
-        <div class="modal-body">
-          <div id="scheduleModalContainer"></div>
-        </div>
-      </div>
-    </div>
   </body>
 </html>

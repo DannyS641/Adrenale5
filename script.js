@@ -56,42 +56,6 @@ document.getElementById("registerBtn").addEventListener("click", () => {
     "_blank"
   );
 });
-// Schedule
-document.getElementById("scheduleBtn").addEventListener("click", () => {
-  const modal = document.getElementById("scheduleModal");
-  const modalContainer = document.getElementById("scheduleModalContainer");
-
-  if (!modal || !modalContainer) {
-    console.error("Schedule modal markup missing in HTML");
-    return;
-  }
-
-  if (typeof window.initSchedule !== "function") {
-    console.error("initSchedule not found. Load schedule.js before script.js");
-    return;
-  }
-  // Open modal
-  modal.classList.add("open");
-
-  // Render schedule INSIDE modal
-  window.initSchedule("scheduleModalContainer");
-});
-document.getElementById("closeSchedule").addEventListener("click", () => {
-  document.getElementById("scheduleModal").classList.remove("open");
-});
-
-document
-  .querySelector("#scheduleModal .modal-backdrop")
-  .addEventListener("click", () => {
-    document.getElementById("scheduleModal").classList.remove("open");
-  });
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    document.getElementById("scheduleModal").classList.remove("open");
-  }
-});
-
 document.getElementById("rulesLink").addEventListener("click", (e) => {
   // Keeps anchor behavior, but you can also open PDF here
   // e.g. go('/rules.pdf')
