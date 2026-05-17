@@ -49,13 +49,13 @@ document.querySelectorAll(".qa").forEach((qa) => {
 // Button actions (wire to endpoints)
 const go = (url) => (window.location.href = url);
 
-document.getElementById("registerBtn").addEventListener("click", () => {
-  // TODO: replace with registration URL
-  window.open(
-    "https://docs.google.com/forms/d/e/1FAIpQLSfffOTnJ0p6FYR05EPWm3oxTa4XoGVlu5CtpXqM6sBqD4Hekg/viewform?usp=dialog",
-    "_blank"
-  );
+const REGISTER_URL = "https://forms.gle/TsSZFLHpd7UdBhQM7";
+
+document.getElementById("registerBtn").addEventListener("click", (e) => {
+  e.preventDefault();
+  window.open(REGISTER_URL, "_blank", "noopener,noreferrer");
 });
+
 document.getElementById("rulesLink").addEventListener("click", (e) => {
   // Keeps anchor behavior, but you can also open PDF here
   // e.g. go('/rules.pdf')
